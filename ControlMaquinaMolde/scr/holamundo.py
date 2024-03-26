@@ -8,7 +8,7 @@ from tkinter import Tk,Label,Button,Entry, Frame
 #string=datetime.now().strftime("%H:%M:%S")
 #print(string)
 #fecha = datetime.strptime(string,"%H:%M:%S")
-#print(fecha)
+#print(fecha) 
 """
 inicio = datetime.now()
 time.sleep(.001)
