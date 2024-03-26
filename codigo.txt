@@ -1,0 +1,52 @@
+
+se crearan archivos excel en una carpeta con nombre archivos que estara en el escritorio con fecha del dia creado y nombre de turno 
+tendra 7 columnas con los siguientes nombres
+operador, atoron madera, set up, falla produccion, afilado, mtto, automatico
+usaremos un teclado numerico modelo DZ3017-00B de los cuales usaremos las teclas que se indicaran para seleccionar en que columna registraremos 
+el tiempo, usaremos el pin digital 12 para almacenar los tiempos de la columna automatico
+
+
+al pulsar la tecla 1 se enviara el tiempo que dure activo a una celda de la columna operador,
+si pulso tecla 2 se envia a atoron madera,
+tecla 3 set up,
+4 falla produccion,
+5 afilado,
+6 mtto,
+
+1=operador
+2=atoron madera
+3=set up
+4= falla produccion,
+5= afilado,
+6= mtto,
+
+debera registrar el tiempo que duro activa la opcion de la tecla en una celda de su respectiva columna y dejara de registrar el tiempo asta que se 
+detecte señal en el pin 12
+
+si 7:31am no se a pulsado ninguna tecla y no se recibe señal en el pin 12,se seleccionara automaticamente tecla 1 sin importar que no se precione
+ la tecla,se registrara todo el tiempo que dure activa en una celda de su columna asta que detecte señal en el pin 12 dejara de registrar el tiempo.
+
+si 3:31pm no se a pulsado ninguna tecla y no se recibe señal en el pin 12,se seleccionara automaticamente tecla 1 sin importar que no se precione la 
+tecla,se registrara todo el tiempo que dure activa en una celda de su columna asta que detecte señal en el pin 12 dejara de registrar el tiempo.
+
+si 11:01pm no se a pulsado ninguna tecla y no se recibe señal en el pin 12,se seleccionara automaticamente tecla 1 sin importar que no se precione la
+ tecla,se registrara todo el tiempo que dure activa en una celda de su columna asta que detecte señal en el pin 12 dejara de registrar el tiempo.
+tambien cada vez que el pin 12 reciba señal debera registrar el tiempo que duro activada la señal en una celda de la columna automatico.
+si se pulsa una tecla no se podra cambiar la opcion asta que detecte una señal en el pin 12.
+
+tambien pondremos horarios para crear los archivos exel
+lunes inicio de turno 7:30am fin de turno 3:29pm  al llegar a 3:29pm debera crear un archivo exel con nombre turno 1
+lunes inicio de turno 3:30pm fin de turno 11:29pm al llegar a 11:29pm debera crear un archivo exel con nombre turno 2
+lunes inicio de turno 11:30pm fi de turno 7:29am al llegar a 7:29am debera crear un archivo exel con nombre turno 3
+asi sera martes, miercoles, jueves y viernes
+sabado 7:30am a 3:29pm  al llegar a 3:29pm debera crear un archivo exel con nombre turno 1
+sabado 3:30pm a 11:29pm al llegar a 11:29pm debera crear un archivo exel con nombre turno 2
+los domingos no se generara ningun archivo exel
+
+lunes a viernes 
+    turno1 7:30 am - 3:29 pm 
+    turno2 3:30 pm - 11_29 pm 
+    turno3 11:30 pm - 7:29 am 
+sabado
+    turno1 7:30 am - 3:29 pm 
+    turno2 3:30 pm - 11_29 pm 
