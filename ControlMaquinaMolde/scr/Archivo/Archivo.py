@@ -3,6 +3,7 @@ from datetime import datetime
 import os.path as path
 import csv
 import os
+import pathlib
 #import keyboard
 """
 clase que maneja los arhivos
@@ -24,7 +25,10 @@ class XArchivo():
     def CreaCarpeta(self):
         # Crear la carpeta "archivos" en el escritorio con nombre yyyy-mm-dd_turnoX
         #obtengo la ruta del scritotio
-        desktop = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop')
+        #windows
+        #desktop = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop')
+        #linux
+        desktop = pathlib.Path.home()/'Desktop'
         #obtengo la fecha actual
         fecha_actual = datetime.now()
         #i la agrego a la ruta
@@ -35,6 +39,7 @@ class XArchivo():
         path_carpeta = os.path.join(desktop, 'archivos', nombre_carpeta)+turno
         os.makedirs(path_carpeta, exist_ok=True)
         nombre_archivo = os.path.join(path_carpeta, 'registros.csv')
+        print("archivo=",nombre_archivo)
         return nombre_archivo
     #--------------------------------funcion que crear el archivo csv-------------------------------------------------------------------
     def EscribeArchivo(self, columnas):
