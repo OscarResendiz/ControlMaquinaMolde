@@ -6,6 +6,7 @@ from tkinter.font import Font
 from tkinter import Tk,Label,Button,Entry, Frame
 from pynput import keyboard as kb
 from Archivo.Archivo import XArchivo
+from GPIO.gpio import GpioClass
 
 class VentanaPrincipal(Frame):
     #-------------------------------------------------------------------------------Constructor-----------------------------------------------------------------------------------------------------------
@@ -22,7 +23,10 @@ class VentanaPrincipal(Frame):
         self.peridoFallaProduccion=datetime(datetime.now().year,datetime.now().month,datetime.now().day,0,0,0,0)
         self.peridoAfilado=datetime(datetime.now().year,datetime.now().month,datetime.now().day,0,0,0,0)
         self.peridoMtto=datetime(datetime.now().year,datetime.now().month,datetime.now().day,0,0,0,0)
-        
+        self.segundos=0
+        self.gpio=GpioClass()
+        self.activo=1 #por default la maquina esta en funcionamiento
+        self.timer1()
     #------------------------------------------------Crea la interfac grafica-----------------------------------------------------------------------------------------------------------------------------
     def create_widgets(self):
         #----------------------Ventana-------------------------------
@@ -35,7 +39,6 @@ class VentanaPrincipal(Frame):
         py=50
         dy=35
         tkinter.Label(self,text="MEDIDOR DE TIEMPOS",font=fuente).place(x=300,y=1) 
-        #tkinter.Label(ventana,text="OPERADOR           PULSA TECLA 1               TIEMPO PERIODO OPERADOR",font=fuente).place(x=10,y=50) 
         tkinter.Label(self,text="OPERADOR",font=fuente).place(x=10,y=py) 
         self.label1=tkinter.Label(self,text="PULSA TECLA 1",font=fuente)
         self.label1.place(x=300,y=py) 
@@ -79,20 +82,10 @@ class VentanaPrincipal(Frame):
         py=py+dy 
 
         tkinter.Label(self,text="AUTOMATICO",font=fuente).place(x=10,y=py)
-        tkinter.Label(self,text="TECLA 8 NO SE PUEDE",font=fuente).place(x=300,y=py)
-        tkinter.Label(self,text="TIEMPO TRABAJADO EN    ",font=fuente).place(x=600,y=py)
+        self.labelTrabajado=tkinter.Label(self,text="TIEMPO TRABAJADO:",font=fuente)
+        self.labelTrabajado.place(x=600,y=py)
         py=py+dy 
 
-        tkinter.Label(self,text="PULSAR ESTA TECLA",font=fuente).place(x=300,y=py)
-        tkinter.Label(self,text="AUTOMATICO",font=fuente).place(x=600,y=py)
-        py=py+dy 
-
-        tkinter.Label(self,text="TECLA MAL",font=fuente).place(x=10,y=py)
-        tkinter.Label(self,text="PULSA TECLA 9",font=fuente).place(x=300,y=py)
-        py=py+dy 
-
-        tkinter.Label(self,text="PRESIONADA",font=fuente).place(x=10,y=py)
-        
     #-------------------------------------------------------------Inicializa el teclado------------------------------------------------------------------------------------------------------------
     def Inicializateclado(self):
         escuchador = kb.Listener(self.onKeyPress)
@@ -105,41 +98,51 @@ class VentanaPrincipal(Frame):
             if tecla==kb.KeyCode.from_char('1'):
                 self.limpiaDatos()
                 self.operador=self.horaInicial.strftime("%H:%M:%S")
+                self.activo=0
                 self.label1.config(fg="green")
             if tecla==kb.KeyCode.from_char('2'):
                 self.limpiaDatos()
                 self.atoronMadera=self.horaInicial.strftime("%H:%M:%S")
+                self.activo=0
                 self.label2.config(fg="green")
             if tecla==kb.KeyCode.from_char('3'):
                 self.limpiaDatos()
                 self.setup=self.horaInicial.strftime("%H:%M:%S")
+                self.activo=0
                 self.label3.config(fg="green")
             if tecla==kb.KeyCode.from_char('4'):
                 self.limpiaDatos()
                 self.fallaProduccion=self.horaInicial.strftime("%H:%M:%S")
+                self.activo=0
                 self.label4.config(fg="green")
             if tecla==kb.KeyCode.from_char('5'):
                 self.limpiaDatos()
                 self.afilado=self.horaInicial.strftime("%H:%M:%S")
+                self.activo=0
                 self.label5.config(fg="green")
             if tecla==kb.KeyCode.from_char('6'):
                 self.limpiaDatos()
                 self.mtto=self.horaInicial.strftime("%H:%M:%S")
+                self.activo=0
                 self.label6.config(fg="green")
             if tecla==kb.KeyCode.from_char('p'):
-                #en este caso se simula que se detecto el funcionamiento del pin12 y se guarda el valor enel archivo
-                time.sleep(.1)
-                self.horaFinal=datetime.now()
-                #self.tiempoFinal=time.time()
-                self.automatico=self.horaFinal.strftime("%H:%M:%S")
-                self.datos=[self.operador,self.atoronMadera,self.setup,self.fallaProduccion,self.afilado,self.mtto,self.automatico]
-                archivo=XArchivo()
-                archivo.EscribeArchivo(self.datos)
-                self.MuestraTiempos()
-                self.limpiaDatos()
+                self.guardaTiempo()
         except Exception as err:
             print(f"ocurrio un error {err=}, {type(err)=}")    
-    
+    #-----------------------------------------------------------se llama cuando se activa la maquina-----------------------------------------------
+    def guardaTiempo(self):
+        #en este caso se simula que se detecto el funcionamiento del pin12 y se guarda el valor enel archivo
+        time.sleep(.1)
+        self.horaFinal=datetime.now()
+        self.automatico=self.horaFinal.strftime("%H:%M:%S")
+        self.datos=[self.operador,self.atoronMadera,self.setup,self.fallaProduccion,self.afilado,self.mtto,self.automatico]
+        archivo=XArchivo()
+        archivo.EscribeArchivo(self.datos)
+        self.MuestraTiempos()
+        self.limpiaDatos()
+        self.activo=1
+        self.segundos=0
+
     #-----------------------Limpia los datos-------------------------------------------------------------------------------------
     def limpiaDatos(self):
         self.operador=""
@@ -156,7 +159,7 @@ class VentanaPrincipal(Frame):
         self.label4.config(fg="black")
         self.label5.config(fg="black")
         self.label6.config(fg="black")
-        
+    #-------------------------------------------------------MuestraTiempos---------------------------------------------------------------------------------------------    
     def MuestraTiempos(self):        
         if self.operador!="":
             #ha cambiado el tiempo
@@ -200,4 +203,29 @@ class VentanaPrincipal(Frame):
             self.peridoMtto+=final-inicio
             texto="TIEMPO MTTO: "+self.peridoMtto.strftime("%H:%M:%S")
             self.labelPeriodoMtto.config(text=texto)
+    #----------------------------------------------------------funcion que se ejecuta cada segundo---------------------------------------------------
+    def timer1(self):
+        #reviso el estado de la maquina
+        try:
+            if self.gpio.maquinaStatus()==1:
+                #la maquina esta detenida?
+                if self.activo==0:
+                    #marco que ya esta trabajando
+                    self.guardaTiempo()
+                else:
+                    horas=0
+                    minutos=0
+                    segundos=self.segundos
+                    if(segundos>3600):
+                        horas=int(segundos/3600)
+                        segundos=segundos-(horas*3600)
+                    if segundos>60:
+                        minutos=int(segundos/60)
+                        segundos=segundos-(minutos*60)
+                    self.labelTrabajado.config(text="TIEMPO TRABAJADO: "+str(horas)+":"+str(minutos)+":"+str(segundos))
+                    self.segundos+=1
+            self.after(1000,self.timer1)
+        except Exception as err:        
+            print(f"ocurrio un error {err=}, {type(err)=}")    
+            self.after(1000,self.timer1)
     
