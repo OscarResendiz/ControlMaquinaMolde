@@ -1,5 +1,6 @@
 from datetime import date
-from datetime import datetime
+#from datetime import datetime
+import datetime
 import csv
 from Archivo.Archivo import XArchivo
 from UI.VentanaPrincipal import VentanaPrincipal

@@ -1,5 +1,5 @@
 from datetime import date
-from datetime import datetime
+import datetime
 import os.path as path
 import csv
 import os
@@ -13,12 +13,15 @@ class XArchivo():
     #---------------------------------------regresa el turno dependiendo de la hora del dia que es
     def DameTurno(self):
         turno="desconocido"
-        hoy=datetime.today()
-        if hoy>=datetime(hoy.year,hoy.month,hoy.day,7,30,0,0) and hoy <=datetime(hoy.year,hoy.month,hoy.day,15,30,0,0):
+        hoy=datetime.datetime.today()
+        if hoy>=datetime.datetime(hoy.year,hoy.month,hoy.day,7,30,0,0) and hoy <=datetime.datetime(hoy.year,hoy.month,hoy.day,15,30,0,0):
             turno="_Turno1"
-        if hoy>datetime(hoy.year,hoy.month,hoy.day,7,30,0,0) and hoy <=datetime(hoy.year,hoy.month,hoy.day,23,30,0,0):
+        if hoy>datetime.datetime(hoy.year,hoy.month,hoy.day,7,30,0,0) and hoy <=datetime.datetime(hoy.year,hoy.month,hoy.day,23,30,0,0):
             turno="_Turno2"
-        if hoy>datetime(hoy.year,hoy.month,hoy.day,23,30,0,0) and hoy <datetime(hoy.year,hoy.month,hoy.day,7,30,0,0):
+        
+        fecha2=datetime.datetime(hoy.year,hoy.month,hoy.day,23,30,0,0) +datetime.timedelta(days=1)
+        
+        if hoy>datetime.datetime(hoy.year,hoy.month,hoy.day,23,30,0,0) and hoy <datetime.datetime(fecha2.year,fecha2.month,fecha2.day,7,30,0,0):
             turno="_Turno3"
         return turno
 
@@ -30,7 +33,7 @@ class XArchivo():
         #linux
         desktop = pathlib.Path.home()/'Desktop'
         #obtengo la fecha actual
-        fecha_actual = datetime.now()
+        fecha_actual = datetime.datetime.now()
         #i la agrego a la ruta
         nombre_carpeta = fecha_actual.strftime("%Y-%m-%d")
         #me traigo el tueno que corresponde
